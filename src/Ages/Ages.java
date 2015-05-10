@@ -6,11 +6,14 @@ import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.util.prefs.Preferences;
 
 import javax.swing.JFrame;
 
 import Ages.graphics.Screen;
 import Ages.input.Keyboard;
+import Ages.level.Level;
+import Ages.level.RandomLevel;
 
 public class Ages extends Canvas implements Runnable {
 
@@ -19,7 +22,9 @@ public class Ages extends Canvas implements Runnable {
 	public static int height = width / 16 * 9;
 	public static int scale = 3;
 	public static String title = ("Ages");
+	public Preferences prefs;
 
+	public Level level;
 	private Thread thread;
 	private JFrame frame;
 	private Keyboard key;
@@ -34,11 +39,15 @@ public class Ages extends Canvas implements Runnable {
 		Dimension size = new Dimension(width * scale, height * scale);
 		setPreferredSize(size);
 		screen = new Screen(width, height);
+		level = new RandomLevel(64,64);
 
 		key = new Keyboard();
 		addKeyListener(key);
+		prefs = Preferences.userRoot().node("click");
 
 		frame = new JFrame();
+		
+		
 	}
 
 	public synchronized void start() {
@@ -128,7 +137,7 @@ public class Ages extends Canvas implements Runnable {
 			return;
 		}
 		screen.clear();
-		screen.render(x, y);
+		level.render(x, y, screen);
 
 		for (int i = 0; i < pixels.length; i++) {
 			pixels[i] = screen.pixels[i];
